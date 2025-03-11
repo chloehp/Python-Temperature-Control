@@ -1,24 +1,29 @@
 import smtplib
 from email.message import EmailMessage
-from datetime import datetime
-import json
-from temphumid import tempHumidList
+import temphumid
 
 #Set the sender email and password and recipient email
-from_email_addr ="REPLACE_WITH_THE_SENDER_EMAIL"
-from_email_pass ="REPLACE_WITH_THE_SENDER_EMAIL_APP_PASSWORD"
-to_email_addr ="REPLACE_WITH_THE_RECIPIENT_EMAIL"
-emailBody = f"""
-Sent from pi on {str(datetime.now())}
-Rawdata:
-{json.dumps(tempHumidList)}"""
 
-def genSVG():
+def genTempSVG():
     print("generate SVG graphs of temperature and humidity from the last 24 hours")
-    tempHumidList.clear()                                   # clear days list (and log.json)
+    newPath = "<path style='fill:none;stroke:#ff0000;stroke-width:0.79375;stroke-linecap:square;paint-order:stroke fill markers' d='M "
+    
+    for item in temphumid.tempHumidList:
+        xPlot = str((item["time"] * 10) + 15)                                   # 00:00 is at x="15", 24:00 is at x="255"
+        yPlot = str(204 - (item["temp"] * 3.6))                                 # 0°C is at y="204" , 50°C is at y="24", 1°C = 3.6
+        newPath += xPlot + "," + yPlot + " "
+        
+    newPath += "' id='path3'/>"                                             # close new path
+    print(newPath)
 
-def sendMail():
+
+def sendMail(config, stringDate, svgData):
     print("Send eMail")
+    
+    emailBody = f"""
+    Sent from pi on {stringDate}
+    Rawdata:
+    {str(temphumid.tempHumidList)}"""
 
     # Code from: https://RandomNerdTutorials.com/raspberry-pi-send-email-python-smtp-server/
 
@@ -27,13 +32,13 @@ def sendMail():
 
     # Set the email body
     msg.set_content(emailBody)
-    #msg.add_attachment(svgDat, maintype='image', subtype='svg')
+    #msg.add_attachment(svgData, maintype='image', subtype='svg')
 
     # Set sender and recipient
-    msg['From'] = from_email_addr
-    msg['To'] = to_email_addr
+    msg['From'] = config["emailAddress"]
+    msg['To'] = config["sendTo"]
     # Set your email subject
-    msg['Subject'] = 'TEST EMAIL'
+    msg['Subject'] = config["title"]
 
     # Connecting to server and sending email
     # Edit the following line with your provider's SMTP server details
@@ -41,7 +46,7 @@ def sendMail():
     # Comment out the next line if your email provider doesn't use TLS
     server.starttls()
     # Login to the SMTP server
-    server.login(from_email_addr, from_email_pass)
+    server.login(config["emailAddress"], config["emailPass"])
 
     # Send the message
     server.send_message(msg)
