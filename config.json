@@ -1,0 +1,10 @@
+{
+    "tooHighTemp": 42,
+    "tooLowTemp": 21,
+    "resetTime": 9,
+
+    "emailAddress": "REPLACE_WITH_THE_SENDER_EMAIL",
+    "emailPass": "REPLACE_WITH_THE_SENDER_EMAIL_APP_PASSWORD",
+    "sendTo": "REPLACE_WITH_THE_RECIPIENT_EMAIL",
+    "title": "Pip's Enclosure: TEMP AND HUMIDITY REPORT"
+}
