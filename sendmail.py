@@ -1,7 +1,9 @@
 import smtplib
 from email.message import EmailMessage
 from time import sleep
+
 import temphumid
+import utility
 
 #Set the sender email and password and recipient email
 
@@ -46,7 +48,8 @@ def sendMail(config, stringDate, svg):
     Sent from {config["location"]} on {stringDate}
     {svg}
     Rawdata:
-    {str(temphumid.logList)}"""
+    {str(temphumid.logList)}
+    """
 
     try:
         # Code from: https://RandomNerdTutorials.com/raspberry-pi-send-email-python-smtp-server/
@@ -55,31 +58,23 @@ def sendMail(config, stringDate, svg):
         # Set the email body
         msg.set_content(emailBody)
         # Set sender and recipient
-        msg['From'] = config["emailAddress"]
-        msg['To'] = config["sendTo"]
-        # Set your email subject
-        msg['Subject'] = config["title"]
+        msg['From'] = config["emailAddress"]        # set email sender
+        msg['To'] = config["sendTo"]                # set email recipient
+        msg['Subject'] = config["title"]            # set email title
 
         # Connecting to server and sending email
-        # Edit the following line with your provider's SMTP server details
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        # Comment out the next line if your email provider doesn't use TLS
-        server.starttls()
-        # Login to the SMTP server
-        server.login(config["emailAddress"], config["emailPass"])
+        server = smtplib.SMTP('smtp.gmail.com', 587)                # emailprovider's SMTP server details        
+        server.starttls()                                           # Comment out if email provider doesn't use TLS
+        server.login(config["emailAddress"], config["emailPass"])   # Login to the SMTP server
 
-        # Send the message
-        server.send_message(msg)
+        server.send_message(msg)        # Send the message
         print('Email sent')
-        #Disconnect from the Server
-        server.quit()
+        server.quit()                   # Disconnect from the Server
         emailAttempts = 1
     
     except:
         print('Could not send email')
-        errorLog = open("errorlog.txt", "a")
-        errorLog.write("Could not send email. Attempt " + str(emailAttempts) + ". :" + stringDate + "\n")
-        errorLog.close()
+        utility.logError("Could not send email. Attempt " + str(emailAttempts))
 
         if emailAttempts < 3:
             print("Trying again in 1 minute")
