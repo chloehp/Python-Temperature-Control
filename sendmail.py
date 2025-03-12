@@ -5,39 +5,46 @@ from time import sleep
 import temphumid
 import utility
 
-#Set the sender email and password and recipient email
-
-def generateSVG(stringDate):
-    print("generate SVG graphs of temperature and humidity from the last 24 hours")
-    openTempGraphSVG = open("temperature-graph.svg", "r")       # open the template for temperature graph
-    tempGraph = openTempGraphSVG.read()                         # 
-    openTempGraphSVG.close()                                    #
+# start of svg path string
+def pathStart(colour, width = "0.79375"): return f"""<path style='fill:none;stroke:{colour};stroke-width:{width};stroke-linecap:none;paint-order:stroke fill markers' d='M """
     
-    # new path for humidity
-    hPath = "<path style='fill:none;stroke:#5cbed0;stroke-width:0.79375;stroke-linecap:square;paint-order:stroke fill markers' d='M "
+def generateSVG(stringDate, highTemp, lowTemp):
+    print("generate SVG graphs of temperature and humidity from the last 24 hours")
+    openGraphSVG = open("graph-template.svg", "r")              # get the template for the graph
+    graph = openGraphSVG.read()                         
+    openGraphSVG.close()                                    
+
+    # draw lines for desired high and low temperatures
+    highTempYPlot = str(204 - (highTemp * 3.6))
+    lowTempYPlot = str(204 - (lowTemp * 3.6))
+    highTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{highTempYPlot} 255,{highTempYPlot}' id='path3'/>"""
+    lowTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{lowTempYPlot} 255,{lowTempYPlot}' id='path4'/>"""
+    
+    hPath = pathStart("#5cbed0")                                # new path for humidity
     for item in temphumid.logList:                              # for each dict in the list
-                                                                # get x plot (time) and y plot (temperature)
+                                                                # get x plot (time) and y plot (humidity)
         xPlot = str((item["time"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
         yPlot = str(204 - (item["humid"] * 1.8))                # 0% is at y="204", 100% is at y="24", 1% = 1.8
         hPath += xPlot + "," + yPlot + " "                      # add cordinates        
-    hPath += "' id='path3'/>"                                   # close new path
+    hPath += "' id='path5'/>"                                   # close new path
     
-    # new path for temperature
-    tPath = "<path style='fill:none;stroke:#ff0000;stroke-width:0.79375;stroke-linecap:square;paint-order:stroke fill markers' d='M "
+    tPath = pathStart("#ff0000")                                # new path for temperature
     for item in temphumid.logList:                              # for each dict in the list
                                                                 # get x plot (time) and y plot (temperature)
         xPlot = str((item["time"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
         yPlot = str(204 - (item["temp"] * 3.6))                 # 0°C is at y="204", 50°C is at y="24", 1°C = 3.6
         tPath += xPlot + "," + yPlot + " "                      # add cordinates        
-    tPath += "' id='path4'/>"                                   # close new path
+    tPath += "' id='path6'/>"                                   # close new path
 
-    newTempGraph = tempGraph[:-6] + hPath + tPath + tempGraph[-6:]    # slice the new path into the SVG template
-    stringDate = stringDate.replace(":", "-")
-    stringDate = stringDate.replace(" ", "_")
-    newTempGraphSVG = open("graphs/temperature" + stringDate + ".svg", "x")
-    newTempGraphSVG.write(newTempGraph)                         # create new SVG graph
-    newTempGraphSVG.close()                                     #
-    return newTempGraph                                         # return the graph
+    newGraph = graph[:-6] + highTempPath + lowTempPath + hPath + tPath + graph[-6:]     # slice the new path into the SVG template
+    stringDate = stringDate.replace(":", "-")                                           # make filename friendly
+    stringDate = stringDate.replace(" ", "_")                                           # make filename friendly
+    fileName = "graphs/" + stringDate + ".svg"                                          # make filename
+    newGraphSVG = open(fileName, "x")
+    newGraphSVG.write(newGraph)                                                         # create new SVG graph
+    newGraphSVG.close()                                     
+    print("New graph at:", fileName)
+    return newGraph                                                                     # return the graph
 
 emailAttempts = 1
 def sendMail(config, stringDate, svg):
@@ -53,11 +60,9 @@ def sendMail(config, stringDate, svg):
 
     try:
         # Code from: https://RandomNerdTutorials.com/raspberry-pi-send-email-python-smtp-server/
-        # Create a message object
-        msg = EmailMessage()
-        # Set the email body
-        msg.set_content(emailBody)
-        # Set sender and recipient
+        
+        msg = EmailMessage()                        # Create a message object
+        msg.set_content(emailBody)                  # Set the email body
         msg['From'] = config["emailAddress"]        # set email sender
         msg['To'] = config["sendTo"]                # set email recipient
         msg['Subject'] = config["title"]            # set email title
@@ -70,7 +75,7 @@ def sendMail(config, stringDate, svg):
         server.send_message(msg)        # Send the message
         print('Email sent')
         server.quit()                   # Disconnect from the Server
-        emailAttempts = 1
+        emailAttempts = 1               # reset email attempts
     
     except:
         print('Could not send email')
@@ -80,7 +85,7 @@ def sendMail(config, stringDate, svg):
             print("Trying again in 1 minute")
             emailAttempts += 1
             sleep(60)
-            sendMail(config, stringDate, svg)
+            sendMail(config, stringDate, svg)       # try again
         else:
             print("Failed to send email, giving up")
-            emailAttempts = 1
+            emailAttempts = 1                       # reset email attempts

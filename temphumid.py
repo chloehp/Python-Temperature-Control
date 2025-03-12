@@ -1,14 +1,19 @@
 import json
 import random
+import utility
 
 logList = []
 
 def startup():
-    log = open("log.json", "r")
-    logRead = log.read()
-    if len(logRead) > 0:                                    # if log.json has data
-        global logList
-        logList = json.loads(logRead)                 # load that data into logList and keep going
+    global logList
+    try:
+        log = open("log.json", "r")
+        logRead = log.read()
+        if len(logRead) > 0:                                    # if log.json has data
+            logList = json.loads(logRead)                 # load that data into logList and keep going
+    except:
+        logList.clear()
+        utility.logError("Bad data from log.json, clear list")
 
 def readTempAndHumid():
     # for now, setting fake numbers
