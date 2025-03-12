@@ -4,30 +4,33 @@ import json
 import temphumid
 import sendmail
 
-cDay = datetime.now().day                           # current day of the month
-
-hasBeenSentToday = False
+appVersion = "v.0.0.0.0.0.0.0.0000001"
+currentDay = datetime.now().day                           # current day of the month
 
 temphumid.startup()
+print("Running Python Temperature Control", appVersion)
+print("Temperature      Humidity      Time")
 while True:                                                                 # loop forever (every 10 mins)
-    tHour = datetime.now().hour + (datetime.now().minute / 60)              # time of day (decimal)    
+    tHour = datetime.now().hour + (datetime.now().minute / 60)              # time of day (decimal)
+    #tHour = 24
     configOpen = open("config.json", "r")
     config = json.loads(configOpen.read())                                  # get config as dictionary
-    tempAndHumid = temphumid.readTempAndHumid()                             # read temperature and humidity
-    temphumid.recordTempAndHumid(tHour, tempAndHumid[0], tempAndHumid[1])   # record temperature and humidity
-    #print(str(tempAndHumid[0]) + "°C", str(tempAndHumid[1]) + "%")
-    
-    rTime = config["resetTime"]                                     # time of day for hasBeenSentToday
-    if hasBeenSentToday != True and tHour >= rTime:                 # if at or past reset-time and data has not been sent today 
-        strDate = str(datetime.now())                               # date as string
-        sendmail.genTempSVG()                                 # generate new temp and humidity graphs
+    configOpen.close()
+    temperature, humidity = temphumid.readTempAndHumid()                     # read temperature and humidity
 
-        #sendmail.sendMail(config, strDate, svg)                    # send email
-        temphumid.tempHumidList.clear()                             # clear days list (and log.json)
-        hasBeenSentToday = True
+    temphumid.recordTempAndHumid(tHour, temperature, humidity)   # record temperature and humidity
+    print(temperature, "°C           ", humidity, "%         ", datetime.now())
 
-    if datetime.now().day != cDay:                  # new day
-        cDay = datetime.now().day                   # set currentday
-        hasBeenSentToday = False
+    reportNow = True
+    if datetime.now().day != currentDay or reportNow == True:       # if it's a different day than it was 10 minutes ago
+        print("New day")
+        stringDate = str(datetime.now())                               # date as string
+        svg = ""
+        if config["generateGraph"] == True:                             # if generateGraph is True
+            svg = sendmail.generateSVG(stringDate)                          # generate new temp and humidity graphs
+
+        sendmail.sendMail(config, stringDate, svg)                    # send email
+        temphumid.logList.clear()                             # clear days list (and log.json)
+        currentDay = datetime.now().day                             # set currentday
 
     sleep(600)

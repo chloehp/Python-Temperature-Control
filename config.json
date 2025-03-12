@@ -1,7 +1,9 @@
 {
     "tooHighTemp": 42,
     "tooLowTemp": 21,
-    "resetTime": 9,
+    "location": "Vivarium",
+
+    "generateGraph": true,
 
     "emailAddress": "REPLACE_WITH_THE_SENDER_EMAIL",
     "emailPass": "REPLACE_WITH_THE_SENDER_EMAIL_APP_PASSWORD",
