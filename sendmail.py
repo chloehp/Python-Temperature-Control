@@ -46,16 +46,24 @@ def generateSVG(stringDate, highTemp, lowTemp):
     print("New graph at:", fileName)
     return newGraph                                                                     # return the graph
 
-emailAttempts = 1
+
+emailAttempts = 0
 def sendMail(config, stringDate, svg):
     global emailAttempts
+    emailAttempts += 1
     print("Send email. Attempt:", emailAttempts, "/ 3")
     
     emailBody = f"""
-    Sent from {config["location"]} on {stringDate}
-    {svg}
-    Rawdata:
-    {str(temphumid.logList)}
+    <html>
+        <head></head>
+        <body>
+            <p>Sent from {config["location"]} on {stringDate}</p><br>
+            <div style="width: 90%; max-width: 600px; margin: auto;">{svg}</div>
+            <br><br>
+            <p>Rawdata:</p>
+            <code>{str(temphumid.logList)}</code>
+        </body>
+    </html>
     """
 
     try:
@@ -75,7 +83,7 @@ def sendMail(config, stringDate, svg):
         server.send_message(msg)        # Send the message
         print('Email sent')
         server.quit()                   # Disconnect from the Server
-        emailAttempts = 1               # reset email attempts
+        emailAttempts = 0               # reset email attempts
     
     except:
         print('Could not send email')
@@ -83,9 +91,8 @@ def sendMail(config, stringDate, svg):
 
         if emailAttempts < 3:
             print("Trying again in 1 minute")
-            emailAttempts += 1
             sleep(60)
             sendMail(config, stringDate, svg)       # try again
         else:
             print("Failed to send email, giving up")
-            emailAttempts = 1                       # reset email attempts
+            emailAttempts = 0                       # reset email attempts
