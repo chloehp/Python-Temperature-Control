@@ -15,3 +15,11 @@ def logError(e):
     errorLog = open("errorlog.txt", "a")
     errorLog.write(e + "\n")                # write to error log, plus new line
     errorLog.close()
+
+def replaceInFile(file, x, y):
+    r = open(file, "r")
+    read = r.read()
+    r.close()
+    rep = read.replace(x, y)
+    w = open(file, "w")
+    w.write(rep)

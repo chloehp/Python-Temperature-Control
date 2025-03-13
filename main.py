@@ -28,8 +28,18 @@ while True:                                                                 # lo
     temphumid.recordTempAndHumid(tHour, temperature, humidity)              # record temperature and humidity
     print(temperature, "°C           ", humidity, "%         ", datetime.now())
 
-    if datetime.now().day != currentDay or config["reportNow"]:             # if it's a different day than it was 10 minutes ago, or reportNow is True
-        print("New day")
+    if datetime.now().day != currentDay:                                    # if it's a different day than it was 10 minutes ago 
+        print("New day: Sending report")
+        generateGraphAndSendEmail()
+        temphumid.logList.clear()                                           # reset todays list (and log.json)
+        currentDay = datetime.now().day                                     # set currentday
+
+    elif config["reportNow"]:                                               # reportNow is True
+        print("Sending report now")
+        generateGraphAndSendEmail()
+        utility.replaceInFile("config.json", '"reportNow": true', '"reportNow": false')    # change back to false in config.json
+    
+    def generateGraphAndSendEmail():
         stringDate = str(datetime.now())                                    # date as string
         svg = ""
         if config["generateGraph"]:                                         # if generateGraph is True
@@ -37,8 +47,5 @@ while True:                                                                 # lo
                                                                             # else svg can stay blank
         if config["sendEmail"]:                                             # if sendEmail is True
             sendmail.sendMail(config, stringDate, svg)                      # send email
-                                                                            #
-        temphumid.logList.clear()                                           # reset todays list (and log.json)
-        currentDay = datetime.now().day                                     # set currentday
 
     sleep(600)
