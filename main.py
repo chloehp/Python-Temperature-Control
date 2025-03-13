@@ -27,6 +27,15 @@ while True:                                                                 # lo
     temperature, humidity = temphumid.readTempAndHumid()                    # read temperature and humidity
     temphumid.recordTempAndHumid(tHour, temperature, humidity)              # record temperature and humidity
     print(temperature, "°C           ", humidity, "%         ", datetime.now())
+    
+    def generateGraphAndSendEmail():
+        stringDate = str(datetime.now())                                    # date as string
+        svg = ""
+        if config["generateGraph"]:                                         # if generateGraph is True
+            svg = sendmail.generateSVG(stringDate, highTemp, lowTemp)       # generate new temp and humidity graph
+                                                                            # else svg can stay blank
+        if config["sendEmail"]:                                             # if sendEmail is True
+            sendmail.sendMail(config, stringDate, svg)                      # send email
 
     if datetime.now().day != currentDay:                                    # if it's a different day than it was 10 minutes ago 
         print("New day: Sending report")
@@ -38,14 +47,5 @@ while True:                                                                 # lo
         print("Sending report now")
         generateGraphAndSendEmail()
         utility.replaceInFile("config.json", '"reportNow": true', '"reportNow": false')    # change back to false in config.json
-    
-    def generateGraphAndSendEmail():
-        stringDate = str(datetime.now())                                    # date as string
-        svg = ""
-        if config["generateGraph"]:                                         # if generateGraph is True
-            svg = sendmail.generateSVG(stringDate, highTemp, lowTemp)       # generate new temp and humidity graph
-                                                                            # else svg can stay blank
-        if config["sendEmail"]:                                             # if sendEmail is True
-            sendmail.sendMail(config, stringDate, svg)                      # send email
 
     sleep(600)

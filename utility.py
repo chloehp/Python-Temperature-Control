@@ -12,7 +12,7 @@ def importConfig():
 def logError(e):
     e = str(datetime.now()) + ": " +  e     # format error with date and time
     print(e)
-    errorLog = open("errorlog.txt", "a")
+    errorLog = open("error.log", "a")
     errorLog.write(e + "\n")                # write to error log, plus new line
     errorLog.close()
 

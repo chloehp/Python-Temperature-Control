@@ -41,12 +41,12 @@ def generateSVG(stringDate, highTemp, lowTemp):
     newGraph = graph[:-6] + highTempPath + lowTempPath + hPath + tPath + graph[-6:]     # slice the new path into the SVG template
     stringDate = stringDate.replace(":", "-")                                           # make filename friendly
     stringDate = stringDate.replace(" ", "_")                                           # make filename friendly
-    fileName = "graphs/" + stringDate + ".svg"                                          # make filename
-    newGraphSVG = open(fileName, "x")
+    fileName = stringDate + ".svg"                                                      # make filename
+    newGraphSVG = open("graphs/" + fileName, "x")
     newGraphSVG.write(newGraph)                                                         # create new SVG graph
     newGraphSVG.close()                                     
-    print("New graph at:", fileName)
-    return newGraph                                                                     # return the graph
+    print("New graph at: graphs/" + fileName)
+    return fileName                                                                     # return the graph
 
 
 emailAttempts = 0
@@ -56,23 +56,24 @@ def sendMail(config, stringDate, svg):
     print("Send email. Attempt:", emailAttempts, "/ 3")
     
     emailBody = f"""
-    <html>
-        <head></head>
-        <body>
-            <p>Sent from {config["location"]} on {stringDate}</p><br>
-            <div style="width: 90%; max-width: 600px; margin: auto;">{svg}</div>
-            <br><br>
-            <p>Rawdata:</p>
-            <code>{str(temphumid.logList)}</code>
-        </body>
-    </html>
+    Sent from {config["location"]} on {stringDate}
+    Rawdata:
+    {str(temphumid.logList)}
     """
 
+    svgFile = ""
+    if len(svg) > 0: 
+        try:
+            svfFileOpen = open("graphs/" + svg, "rb")
+            svgFile = svfFileOpen.read()
+            svfFileOpen.close()
+        except: svgFile = ""
+
+
     try:
-        # Code from: https://RandomNerdTutorials.com/raspberry-pi-send-email-python-smtp-server/
-        
         msg = EmailMessage()                        # Create a message object
         msg.set_content(emailBody)                  # Set the email body
+        msg.add_attachment(svgFile, maintype = "text", subtype = "plain", filename = "graph-" + svg)    # Attach graph
         msg['From'] = config["emailAddress"]        # set email sender
         msg['To'] = config["sendTo"]                # set email recipient
         msg['Subject'] = config["title"]            # set email title
