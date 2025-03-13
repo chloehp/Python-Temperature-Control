@@ -14,11 +14,11 @@ def startup():
     try:
         log = open("log.json", "r")
         logRead = log.read()
-        if len(logRead) > 0:                                    # if log.json has data
-            logList = json.loads(logRead)                 # load that data into logList and keep going
+        if len(logRead) > 0:                    # if log.json has data
+            logList = json.loads(logRead)       # load that data into logList and keep going
     except:
         logList.clear()
-        utility.logError("Bad data from log.json, clear list")
+        utility.logError("Bad data from log.json, clear list. Start from scratch.")
 
 readAttempts = 0
 def readTempAndHumid():

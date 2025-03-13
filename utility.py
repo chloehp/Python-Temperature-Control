@@ -5,6 +5,8 @@ def importConfig():
     configOpen = open("config.json", "r")
     config = json.loads(configOpen.read())  # get config as dictionary
     configOpen.close()
+    # check all required variables are there, else will error
+    tooHighTemp, tooLowTemp, location, generateGraph, sendEmail, reportNow, emailAddress, emailPass, sendTo, title = config["tooHighTemp"], config["tooLowTemp"], config["location"], config["generateGraph"], config["sendEmail"], config["reportNow"], config["emailAddress"], config["emailPass"], config["sendTo"], config["title"]
     return config
 
 def logError(e):

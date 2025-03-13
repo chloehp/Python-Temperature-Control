@@ -14,11 +14,13 @@ def generateSVG(stringDate, highTemp, lowTemp):
     graph = openGraphSVG.read()                         
     openGraphSVG.close()                                    
 
-    # draw lines for desired high and low temperatures
-    highTempYPlot = str(204 - (highTemp * 3.6))
-    lowTempYPlot = str(204 - (lowTemp * 3.6))
-    highTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{highTempYPlot} 255,{highTempYPlot}' id='path3'/>"""
-    lowTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{lowTempYPlot} 255,{lowTempYPlot}' id='path4'/>"""
+    highTempPath = ""
+    lowTempPath = ""
+    if isinstance(highTemp, (int, float)) and isinstance(lowTemp, (int, float)):                                    # if highTemp and lowTemp are numbers
+        highTempYPlot = str(204 - (highTemp * 3.6))
+        lowTempYPlot = str(204 - (lowTemp * 3.6))
+        highTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{highTempYPlot} 255,{highTempYPlot}' id='path3'/>"""   # draw line for high temperature
+        lowTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{lowTempYPlot} 255,{lowTempYPlot}' id='path4'/>"""      # draw line for low temperature
     
     hPath = pathStart("#5cbed0")                                # new path for humidity
     for item in temphumid.logList:                              # for each dict in the list
