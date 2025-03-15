@@ -1,6 +1,7 @@
 import smtplib
 from email.message import EmailMessage
 from time import sleep
+from email.mime.text import MIMEText
 
 import temphumid
 import utility
@@ -56,10 +57,23 @@ def sendMail(config, stringDate, svg):
     print("Send email. Attempt:", emailAttempts, "/ 3")
     
     emailBody = f"""
-    Sent from {config["location"]} on {stringDate}
-    Rawdata:
-    {str(temphumid.logList)}
+        {config["message"]}
+
+        Rawdata:
+        {str(temphumid.logList)}
     """
+    htmlBody = MIMEText(f"""
+    <html>
+        <head></head>
+        <body>
+            <div style="width: 90%; max-width: 600px; margin: auto;">
+                <p>{config["message"]}</p><br>
+                <p>Rawdata:</p><br>
+                <code>{str(temphumid.logList)}</code><br>
+            </div>
+        </body>
+    </html>
+    """, "html")
 
     svgFile = ""
     if len(svg) > 0: 
@@ -67,16 +81,20 @@ def sendMail(config, stringDate, svg):
             svfFileOpen = open("graphs/" + svg, "rb")
             svgFile = svfFileOpen.read()
             svfFileOpen.close()
-        except: svgFile = ""
+        except: 
+            svgFile = ""
+            utility.logError("Could not get graph.")
 
 
     try:
-        msg = EmailMessage()                        # Create a message object
-        msg.set_content(emailBody)                  # Set the email body
-        msg.add_attachment(svgFile, maintype = "text", subtype = "plain", filename = "graph-" + svg)    # Attach graph
-        msg['From'] = config["emailAddress"]        # set email sender
-        msg['To'] = config["sendTo"]                # set email recipient
-        msg['Subject'] = config["title"]            # set email title
+        msg = EmailMessage()                                        # Create a message object
+        msg.set_content(emailBody)                                  # Set the email body
+        msg.add_alternative(htmlBody)                               # Set the HTML email body
+        if len(svgFile) > 0:                                        # If there is a graph to send
+            msg.add_attachment(svgFile, maintype = "text", subtype = "plain", filename = "graph-" + svg + ".html")    # Attach graph as html file
+        msg['From'] = config["emailAddress"]                        # set email sender
+        msg['To'] = config["sendTo"]                                # set email recipient
+        msg['Subject'] = config["title"] + " : " + stringDate       # set email title
 
         # Connecting to server and sending email
         server = smtplib.SMTP('smtp.gmail.com', 587)                # emailprovider's SMTP server details        

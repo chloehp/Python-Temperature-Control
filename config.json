@@ -2,7 +2,6 @@
     " comment": "Leave blank to not set temperature range:",
     "tooHighTemp": 42,
     "tooLowTemp": 21,
-    "location": "SENSOR LOCATION",
 
     "generateGraph": true,
     "sendEmail": false,
@@ -11,5 +10,6 @@
     "emailAddress": "THE SENDER EMAIL",
     "emailPass": "THE SENDER EMAIL APP PASSWORD",
     "sendTo": "THE RECIPIENT EMAIL",
-    "title": "EMAIL TITLE"
+    "title": "EMAIL TITLE",
+    "message": "EMAIL MESSAGE"
 }
