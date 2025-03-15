@@ -56,11 +56,16 @@ def sendMail(config, stringDate, svg):
     emailAttempts += 1
     print("Send email. Attempt:", emailAttempts, "/ 3")
     
+    stringLogList = "[<br>\n"
+    for item in temphumid.logList:
+        stringLogList += str(item) + "<br>\n"
+    stringLogList += "]"
+
     emailBody = f"""
         {config["message"]}
 
         Rawdata:
-        {str(temphumid.logList)}
+        {stringLogList}
     """
     htmlBody = MIMEText(f"""
     <html>
@@ -69,7 +74,7 @@ def sendMail(config, stringDate, svg):
             <div style="width: 90%; max-width: 600px; margin: auto;">
                 <p>{config["message"]}</p><br>
                 <p>Rawdata:</p><br>
-                <code>{str(temphumid.logList)}</code><br>
+                <code>{stringLogList}</code><br>
             </div>
         </body>
     </html>

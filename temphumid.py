@@ -1,13 +1,18 @@
+simulated = True
+
 import json
-import random
 from time import sleep
-#import board
-#import adafruit_dht
+
+if simulated:
+    import random
+else:
+    import board
+    import adafruit_dht
+    sensor = adafruit_dht.DHT11(board.D4)
 
 import utility
 
 logList = []
-#sensor = adafruit_dht.DHT11(board.D4)
 
 def startup():
     global logList
@@ -25,17 +30,17 @@ def readTempAndHumid():
     global readAttempts
     readAttempts += 1
     try:
-    # fake numbers (random):
-        t = random.randrange(12, 48)
-        h = random.randrange(0, 100)
-    # real numbers (from sensor):
-        #t = sensor.temperature          # attempt temperature read
-        #h = sensor.humidity             # attempt humidity read
-        t, h = int(t), int(h)           # force int so that it will throw error if not a number
+        if simulated:                       # fake numbers (random)
+            t = random.randrange(12, 48)
+            h = random.randrange(0, 100)
+        else:                               # real numbers (from sensor)
+            t = sensor.temperature          # attempt temperature read
+            h = sensor.humidity             # attempt humidity read
+            t, h = float(t), float(h)       # force int so that it will throw error if not a number
         readAttempts = 0                # reset read attempts
 
     except:
-        utility.logError(f"""Bad sensor data. t = {str(t)}, h = {str(h)}. Attempt {str(readAttempts)}""")
+        utility.logError(f"""Bad sensor data. Attempt {str(readAttempts)}""")
         if readAttempts < 3:            # will try again 3 times
             print("Trying again in 10 seconds")
             sleep(10)

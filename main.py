@@ -24,9 +24,6 @@ while True:                                                                 # lo
     
     highTemp = config["tooHighTemp"]                                        # what temperature is too high
     lowTemp = config["tooLowTemp"]                                          # what temperature is too low
-    temperature, humidity = temphumid.readTempAndHumid()                    # read temperature and humidity
-    temphumid.recordTempAndHumid(tHour, temperature, humidity)              # record temperature and humidity
-    print(temperature, "°C           ", humidity, "%         ", datetime.now())
     
     def generateGraphAndSendEmail():
         stringDate = str(datetime.now())                                    # date as string
@@ -48,4 +45,9 @@ while True:                                                                 # lo
         generateGraphAndSendEmail()
         utility.replaceInFile("config.json", '"reportNow": true', '"reportNow": false')    # change back to false in config.json
 
+    
+    temperature, humidity = temphumid.readTempAndHumid()                    # read temperature and humidity
+    temphumid.recordTempAndHumid(tHour, temperature, humidity)              # record temperature and humidity
+    print(temperature, "°C           ", humidity, "%         ", datetime.now())
+    
     sleep(600)
