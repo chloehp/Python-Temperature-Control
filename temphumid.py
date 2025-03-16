@@ -46,7 +46,7 @@ def readTempAndHumid():
             sleep(10)
             t, h = readTempAndHumid()   # try again
         else:
-            print("Failed to get sensor data, giving up")
+            utility.logError("Failed to get sensor data, giving up")
             t, h = -999, -999           # return obviously spoiled data
             readAttempts = 0            # reset read attempts
     

@@ -25,6 +25,7 @@ def generateSVG(stringDate, highTemp, lowTemp):
     
     hPath = pathStart("#5cbed0")                                # new path for humidity
     for item in temphumid.logList:                              # for each dict in the list
+        if item["humid" == -999]: continue                      # if bad data, skip in graph
                                                                 # get x plot (time) and y plot (humidity)
         xPlot = str((item["time"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
         yPlot = str(204 - (item["humid"] * 1.8))                # 0% is at y="204", 100% is at y="24", 1% = 1.8
@@ -33,6 +34,7 @@ def generateSVG(stringDate, highTemp, lowTemp):
     
     tPath = pathStart("#ff0000")                                # new path for temperature
     for item in temphumid.logList:                              # for each dict in the list
+        if item["temp" == -999]: continue                       # if bad data, skip in graph
                                                                 # get x plot (time) and y plot (temperature)
         xPlot = str((item["time"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
         yPlot = str(204 - (item["temp"] * 3.6))                 # 0°C is at y="204", 50°C is at y="24", 1°C = 3.6
@@ -56,11 +58,7 @@ def sendMail(config, stringDate, svg):
     emailAttempts += 1
     print("Send email. Attempt:", emailAttempts, "/ 3")
     
-    stringLogList = "[<br>\n"
-    for item in temphumid.logList:
-        stringLogList += str(item) + "<br>\n"
-    stringLogList += "]"
-
+    stringLogList = str(temphumid.logList)
     emailBody = f"""
         {config["message"]}
 
