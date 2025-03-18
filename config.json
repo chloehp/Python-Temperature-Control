@@ -1,11 +1,12 @@
 {
-    " comment": "Leave blank to not set temperature range:",
+    " comment1": "Leave blank to not set temperature range:",
     "tooHighTemp": 42,
     "tooLowTemp": 21,
 
     "generateGraph": true,
     "sendEmail": false,
-    "reportNow": false,
+    " comment2": "If someone sends an email with one of these subjects, will return a report:",
+    "reportCodes": ["r", "report", "Report", "mushrooms", "Mushrooms"],
 
     "emailAddress": "THE SENDER EMAIL",
     "emailPass": "THE SENDER EMAIL APP PASSWORD",

@@ -53,7 +53,7 @@ def generateSVG(stringDate, highTemp, lowTemp):
 
 
 emailAttempts = 0
-def sendMail(config, stringDate, svg):
+def sendMail(to, config, stringDate, svg):
     global emailAttempts
     emailAttempts += 1
     print("Send email. Attempt:", emailAttempts, "/ 3")
@@ -96,7 +96,7 @@ def sendMail(config, stringDate, svg):
         if len(svgFile) > 0:                                        # If there is a graph to send
             msg.add_attachment(svgFile, maintype = "text", subtype = "plain", filename = "graph-" + svg + ".html")    # Attach graph as html file
         msg['From'] = config["emailAddress"]                        # set email sender
-        msg['To'] = config["sendTo"]                                # set email recipient
+        msg['To'] = to                                              # set email recipient
         msg['Subject'] = config["title"] + " : " + stringDate       # set email title
 
         # Connecting to server and sending email
