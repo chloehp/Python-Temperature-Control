@@ -13,6 +13,22 @@ except: raise Exception("The following variables are required in config.json: to
 
 temphumid.startup()
 print("Running Python Temperature Control", appVersion)
+try: print("""
+                    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒                                        
+                 ▒▒▒                    ▒▒▒▒                 ██████             
+              ▒▒▒▒                          ▒▒              ██   ██             
+             ▒           ▄▄▄████████▄         ▒    ▄▄       █████               
+            ▒          ██         ▄▄▀█▄         ▄▄█▀▀▀█▄    █        ███        
+   ▄████▄▄           ▄█▀▄▄        ██ ██      ▄█▓▀      ▓    █   █████           
+  ▓▀     ▀▓▓█▄▄      ██ ██         ▒ ██    █▀▀        ▄█          █             
+  ▓           ▀      ██ ▒   ▄▄ ▄█▀  ██               ▄▓           █     ████    
+   ▓▄               ▄ ██▄    ▀█▀  ▄██              ▄▓            █     █        
+    ▓▓▄          ▄▄▓    ███▄▄▄▄▄█▀▀  █▄▄         ▄▄▓                   █        
+       ▓▓▄     ▄▓▓                      ▓█▄▄▄▄▄█▓                      ████     
+         ▀▀███▀▀                           ▀▀▀                                  
+""")
+except: pass
+sleep(1.5)
 print("Temperature      Humidity      Time")
 while True:                                                                 # loop forever (about every 5 mins)
     tHour = datetime.now().hour + (datetime.now().minute / 60)              # time of day (decimal)
