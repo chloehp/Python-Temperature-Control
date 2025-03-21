@@ -55,9 +55,9 @@ def readTempAndHumid():
 
 def recordTempAndHumid(time, temp, humidity):
     th = {                              # create dictionary
-        "time": time,
-        "temp": temp,
-        "humid": humidity
+        "c": time,
+        "t": temp,
+        "h": humidity
     }
     logList.append(th)                  # record dictionary into logList
     log = open("log.json", "w")

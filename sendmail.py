@@ -25,19 +25,19 @@ def generateSVG(stringDate, highTemp, lowTemp):
     
     hPath = pathStart("#5cbed0")                                # new path for humidity
     for item in temphumid.logList:                              # for each dict in the list
-        if item["humid"] == -999: continue                      # if bad data, skip in graph
+        if item["h"] == -999: continue                      # if bad data, skip in graph
                                                                 # get x plot (time) and y plot (humidity)
-        xPlot = str((item["time"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
-        yPlot = str(204 - (item["humid"] * 1.8))                # 0% is at y="204", 100% is at y="24", 1% = 1.8
+        xPlot = str((item["c"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
+        yPlot = str(204 - (item["h"] * 1.8))                # 0% is at y="204", 100% is at y="24", 1% = 1.8
         hPath += xPlot + "," + yPlot + " "                      # add cordinates        
     hPath += "' id='path5'/>"                                   # close new path
     
     tPath = pathStart("#ff0000")                                # new path for temperature
     for item in temphumid.logList:                              # for each dict in the list
-        if item["temp"] == -999: continue                       # if bad data, skip in graph
+        if item["t"] == -999: continue                       # if bad data, skip in graph
                                                                 # get x plot (time) and y plot (temperature)
-        xPlot = str((item["time"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
-        yPlot = str(204 - (item["temp"] * 3.6))                 # 0°C is at y="204", 50°C is at y="24", 1°C = 3.6
+        xPlot = str((item["c"] * 10) + 15)                   # 00:00 is at x="15", 24:00 is at x="255"
+        yPlot = str(204 - (item["t"] * 3.6))                 # 0°C is at y="204", 50°C is at y="24", 1°C = 3.6
         tPath += xPlot + "," + yPlot + " "                      # add cordinates        
     tPath += "' id='path6'/>"                                   # close new path
 
@@ -56,13 +56,20 @@ emailAttempts = 0
 def sendMail(to, config, stringDate, svg):
     global emailAttempts
     emailAttempts += 1
-    print("Send email. Attempt:", emailAttempts, "/ 3")
+    print("Send email to:", to, " Attempt:", emailAttempts, "/ 3")
     
     stringLogList = str(temphumid.logList)
+    htmlLogList = " <tr> <th>Temperature</th><th>Humidity</th><th>Time</th> </tr> " # format string into html table
+    for log in temphumid.logList:                                   # from each log in list
+        logTemp = "<td>" + str(log['t']) + "°C</td>"                # get temperature
+        logHum = "<td>" + str(log['h']) + "%</td>"                  # get humidity
+        logClock = "<td>" + str(log['c']) + "</td>"                 # get time
+        htmlLogList += f"<tr>{logTemp}{logHum}{logClock}</tr>"      # format string into html table
+
     emailBody = f"""
         {config["message"]}
 
-        Rawdata:
+        Data:
         {stringLogList}
     """
     htmlBody = MIMEText(f"""
@@ -71,8 +78,8 @@ def sendMail(to, config, stringDate, svg):
         <body>
             <div style="width: 90%; max-width: 600px; margin: auto;">
                 <p>{config["message"]}</p><br>
-                <p>Rawdata:</p><br>
-                <code>{stringLogList}</code><br>
+                <p>Data:</p><br>
+                <table>{htmlLogList}</table><br>
             </div>
         </body>
     </html>
@@ -94,7 +101,8 @@ def sendMail(to, config, stringDate, svg):
         msg.set_content(emailBody)                                  # Set the email body
         msg.add_alternative(htmlBody)                               # Set the HTML email body
         if len(svgFile) > 0:                                        # If there is a graph to send
-            msg.add_attachment(svgFile, maintype = "text", subtype = "plain", filename = "graph-" + svg + ".html")    # Attach graph as html file
+            msg.add_attachment(svgFile, maintype = "text", subtype = "plain", filename = "graph-" + svg + ".html")  # Attach graph as html file
+        #msg.add_attachment(stringLogList, maintype = "text", subtype = "plain", filename = "rawdata.json")          # Attach log.json
         msg['From'] = config["emailAddress"]                        # set email sender
         msg['To'] = to                                              # set email recipient
         msg['Subject'] = config["title"] + " : " + stringDate       # set email title
