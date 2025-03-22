@@ -36,8 +36,8 @@ def readTempAndHumid():
         else:                               # real numbers (from sensor)
             t = sensor.temperature          # attempt temperature read
             h = sensor.humidity             # attempt humidity read
-            t, h = float(t), float(h)       # force int so that it will throw error if not a number
-        readAttempts = 0                # reset read attempts
+            t, h = float(t), float(h)       # make float so that it will throw error if not a number
+        readAttempts = 0                    # reset read attempts
 
     except:
         utility.logError(f"""Bad sensor data. Attempt {str(readAttempts)}""")
@@ -53,11 +53,12 @@ def readTempAndHumid():
     return t, h                         # return temperature and humidity
 
 
-def recordTempAndHumid(time, temp, humidity):
+def recordTempAndHumid(hour, minute, temp, humidity):
     th = {                              # create dictionary
-        "c": time,
-        "t": temp,
-        "h": humidity
+        "H": hour,
+        "M": minute,
+        "tC": temp,
+        "h%": humidity
     }
     logList.append(th)                  # record dictionary into logList
     log = open("log.json", "w")

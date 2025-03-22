@@ -29,10 +29,8 @@ try: print("""
 """)
 except: pass
 sleep(1.5)
-print(f"{"Temperature":15}{"Humidity":15}Time")                             # formatted 3 columns, width 15
+print(f"{"Temperature":15}{"Humidity":15}Time")                             # print 3 column headers, width 15
 while True:                                                                 # loop forever (about every 5 mins)
-    tHour = datetime.now().hour + (datetime.now().minute / 60)              # time of day (decimal)
-    #tHour = 24
     try: config = utility.importConfig()                                    # update config
     except:
         config = defaultConfig                                              # if error in config file, use default config
@@ -50,26 +48,26 @@ while True:                                                                 # lo
                                                                             # else svg can stay blank
         if config["sendEmail"]:                                             # if sendEmail is True
             sendmail.sendMail(config["sendTo"], config, stringDate, svg)    # send email
-
+                                                                            # else dont
         temphumid.logList.clear()                                           # reset todays list (and log.json)
         currentDay = datetime.now().day                                     # set currentday
-        print(f"{"Temperature":15}{"Humidity":15}Time")
+        print(f"{"Temperature":15}{"Humidity":15}Time")                     # reprint 3 column headers, width 15
         
     try: 
         receivedEmails = utility.getMail(config)                                # check emails
         if len(receivedEmails) > 0:                                             # if theres something in the mail queue
             if config["generateGraph"]:                                         # if generateGraph is True
-                svg = sendmail.generateSVG(stringDate, config["tooHighTemp"], config["tooLowTemp"])       # generate new temp and humidity graph
+                svg = sendmail.generateSVG(stringDate, highTemp, lowTemp)       # generate new temp and humidity graph
                                                                                 # else svg can stay blank
             if config["sendEmail"]:                                             # if sendEmail is True
-                for returnAddress in receivedEmails:
-                    sendmail.sendMail(returnAddress, config, stringDate, svg)   # send email back with tuple from the mail queue and generated
-            print(f"{"Temperature":15}{"Humidity":15}Time")
+                for returnAddress in receivedEmails:                            # for every valid email recieved
+                    sendmail.sendMail(returnAddress, config, stringDate, svg)   # send email back
+            print(f"{"Temperature":15}{"Humidity":15}Time")                     # reprint 3 column headers, width 15
 
     except: utility.logError("Pop Mail error. Could not get emails for " + config["emailAddress"])        
     
-    temperature, humidity = temphumid.readTempAndHumid()                    # read temperature and humidity
-    temphumid.recordTempAndHumid(tHour, temperature, humidity)              # record temperature and humidity
-    print(f"{str(temperature) + "°C":15}{str(humidity) + "%":15}{datetime.now()}") # print formatted 3 columns, width 15
-    
+    temperature, humidity = temphumid.readTempAndHumid()                                            # read temperature and humidity
+    temphumid.recordTempAndHumid(datetime.now().hour, datetime.now().minute, temperature, humidity) # record time, temperature and humidity
+    print(f"{str(temperature) + "°C":15}{str(humidity) + "%":15}{datetime.now()}")                  # print formatted 3 columns, width 15
+    # sleep about 5 mins
     sleep(300)
