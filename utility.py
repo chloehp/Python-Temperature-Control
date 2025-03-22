@@ -32,7 +32,7 @@ def getAttachment(fileName):
         fileOpen.close()
         return file                                         # return the file as bytes
     except: 
-        utility.logError(f"Could not get '{fileName}'")
+        utility.logError(f"""Could not get '{fileName}'""")
         return ""                                           # return blank string (falsey)
 
 

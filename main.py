@@ -9,7 +9,7 @@ import utility
 appVersion = "v.0.0.0.0.0.0.0.0000003"
 currentDay = datetime.now().day                     # current day of the month
 try: defaultConfig = utility.importConfig()         # load config. If this fails, then one or more essential variable is missing
-except: raise Exception("The following variables are required in config.json: tooHighTemp, tooLowTemp, location, generateGraph, sendEmail, reportNow, emailAddress, emailPass, sendTo, title")
+except: raise Exception("The following variables are required in config.json: tooHighTemp, tooLowTemp, generateGraph, sendEmail, reportCodes, emailAddress, emailPass, sendTo, title and message")
 
 temphumid.startup()
 print("Running Python Temperature Control", appVersion)
@@ -28,8 +28,7 @@ try: print("""
          ▀▀███▀▀                           ▀▀▀                                  
 """)
 except: pass
-sleep(1.5)
-print(f"{"Temperature":15}{"Humidity":15}Time")                             # print 3 column headers, width 15
+print(f"""{"Temperature":15}{"Humidity":15}Time""")                         # print 3 column headers, width 15
 while True:                                                                 # loop forever (about every 5 mins)
     try: config = utility.importConfig()                                    # update config
     except:
@@ -51,7 +50,7 @@ while True:                                                                 # lo
                                                                             # else dont
         temphumid.logList.clear()                                           # reset todays list (and log.json)
         currentDay = datetime.now().day                                     # set currentday
-        print(f"{"Temperature":15}{"Humidity":15}Time")                     # reprint 3 column headers, width 15
+        print(f"""{"Temperature":15}{"Humidity":15}Time""")                 # reprint 3 column headers, width 15
         
     try: 
         receivedEmails = utility.getMail(config)                                # check emails
@@ -62,12 +61,12 @@ while True:                                                                 # lo
             if config["sendEmail"]:                                             # if sendEmail is True
                 for returnAddress in receivedEmails:                            # for every valid email recieved
                     sendmail.sendMail(returnAddress, config, stringDate, svg)   # send email back
-            print(f"{"Temperature":15}{"Humidity":15}Time")                     # reprint 3 column headers, width 15
+            print(f"""{"Temperature":15}{"Humidity":15}Time""")                 # reprint 3 column headers, width 15
 
     except: utility.logError("Pop Mail error. Could not get emails for " + config["emailAddress"])        
     
     temperature, humidity = temphumid.readTempAndHumid()                                            # read temperature and humidity
     temphumid.recordTempAndHumid(datetime.now().hour, datetime.now().minute, temperature, humidity) # record time, temperature and humidity
-    print(f"{str(temperature) + "°C":15}{str(humidity) + "%":15}{datetime.now()}")                  # print formatted 3 columns, width 15
+    print(f"""{str(temperature) + "°C":15}{str(humidity) + "%":15}{datetime.now()}""")              # print formatted 3 columns, width 15
     # sleep about 5 mins
     sleep(300)

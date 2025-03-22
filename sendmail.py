@@ -59,12 +59,12 @@ def sendMail(to, config, stringDate, svg):
     print("Send email to:", to, " Attempt:", emailAttempts, "/ 3")
     
     stringLogList = str(temphumid.logList)
-    htmlLogList = "<tr><th>Temperature</th><th>Humidity</th><th>Time</th></tr>"     # format string into html table
+    htmlLogList = "<tr><th>Time</th><th>Temperature</th><th>Humidity</th></tr>"     # format string into html table
     for log in temphumid.logList:                                                   # from each log in list
         logTemp = "<td>" + str(log["tC"]) + "°C</td>"                               # get temperature
         logHum = "<td>" + str(log["h%"]) + "%</td>"                                 # get humidity
         logClock = "<td>" + str(log["H"]) + ":" + str(log["M"]) + "</td>"           # get time
-        htmlLogList += f"<tr>{logTemp}{logHum}{logClock}</tr>"                      # format string into html table
+        htmlLogList += f"""<tr>{logClock}{logTemp}{logHum}</tr>"""                  # format string into html table
 
     # text email body
     emailBody = f"""
@@ -76,19 +76,19 @@ def sendMail(to, config, stringDate, svg):
     # html email body
     htmlBody = MIMEText(f"""
     <html>
-        <head><style>
-            td, th {"{ border: 1px solid black; padding: 8px; }"}
-        </style></head>
-        <body><div style="width: 90%; max-width: 600px; margin: auto;">
-            <p>{config["message"]}</p><br>
-            <p>Data:</p><br>
-            <table style="border-collapse: collapse;width: 100%;">{htmlLogList}</table><br>
-        </div>/body>
+        <head><style> td, th {"{ border: 1px solid black; padding: 8px; }"} </style></head>
+        <body>
+            <div style="width: 90%; max-width: 600px; margin: auto;">
+                <p>{config["message"]}</p><br>
+                <p style="text-align: center;font-weight: bold;">Temperature and humidity table:</p>
+                <table style="border-collapse: collapse;width: 100%;">{htmlLogList}</table><br>
+            </div>
+        </body>
     </html>
     """, "html")
 
     svgFile = utility.getAttachment("graphs/" + svg)
-    logFile = utility.getAttachment(""log.json"")
+    logFile = utility.getAttachment("log.json")
 
     try:
         msg = EmailMessage()                                        # Create a message object
@@ -97,7 +97,7 @@ def sendMail(to, config, stringDate, svg):
         if svgFile:                                                 # If there is a graph to send
             msg.add_attachment(svgFile, maintype = "text", subtype = "plain", filename = "graph-" + svg + ".html")  # Attach graph as html file
         if logFile:                                                 # If there is a log to send
-            msg.add_attachment(logFile, maintype = "text", subtype = "plain", filename = "rawdata.json")            # Attach log.json
+            msg.add_attachment(logFile, maintype = "text", subtype = "plain", filename = "Rawdata.json")            # Attach log.json
         msg['From'] = config["emailAddress"]                        # set email sender
         msg['To'] = to                                              # set email recipient
         msg['Subject'] = config["title"] + " : " + stringDate       # set email title
