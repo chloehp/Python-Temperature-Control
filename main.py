@@ -53,7 +53,7 @@ while True:                                                                 # lo
         print(f"""{"Temperature":15}{"Humidity":15}Time""")                 # reprint 3 column headers, width 15
         
     try: 
-        receivedEmails = utility.getMail(config)                                # check emails
+        receivedEmails = utility.getMail(config)                                # check for emails, load as list of addresses "receivedEmails"
         if len(receivedEmails) > 0:                                             # if theres something in the mail queue
             if config["generateGraph"]:                                         # if generateGraph is True
                 svg = sendmail.generateSVG(stringDate, highTemp, lowTemp)       # generate new temp and humidity graph

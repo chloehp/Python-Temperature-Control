@@ -21,6 +21,7 @@ def startup():
         logRead = log.read()
         if len(logRead) > 0:                    # if log.json has data
             logList = json.loads(logRead)       # load that data into logList and keep going
+            print("Program has restarted and succsefully loaded from last save (log.json).")
     except:
         logList.clear()
         utility.logError("Bad data from log.json, clear list. Start from scratch.")
@@ -40,7 +41,7 @@ def readTempAndHumid():
         readAttempts = 0                    # reset read attempts
 
     except:
-        utility.logError(f"""Bad sensor data. Attempt {str(readAttempts)}""")
+        utility.logError(f"""Bad sensor data. Attempt {readAttempts}""")
         if readAttempts < 3:            # will try again 3 times
             print("Trying again in 10 seconds")
             sleep(10)

@@ -63,7 +63,7 @@ def sendMail(to, config, stringDate, svg):
     for log in temphumid.logList:                                                   # from each log in list
         logTemp = "<td>" + str(log["tC"]) + "°C</td>"                               # get temperature
         logHum = "<td>" + str(log["h%"]) + "%</td>"                                 # get humidity
-        logClock = "<td>" + str(log["H"]) + ":" + str(log["M"]) + "</td>"           # get time
+        logClock = f"""<td>{log["H"]:02d}:{log["M"]:02d}</td>"""                    # get time - format: HOURS:MINUTES (with leading zero)
         htmlLogList += f"""<tr>{logClock}{logTemp}{logHum}</tr>"""                  # format string into html table
 
     # text email body

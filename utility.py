@@ -17,13 +17,13 @@ def logError(e):
     errorLog.write(e + "\n")                # write to error log, plus new line
     errorLog.close()
 
-def replaceInFile(file, x, y):
-    r = open(file, "r")
-    read = r.read()
-    r.close()
-    rep = read.replace(x, y)
-    w = open(file, "w")
-    w.write(rep)
+#def replaceInFile(file, x, y):
+#    r = open(file, "r")
+#    read = r.read()
+#    r.close()
+#    rep = read.replace(x, y)
+#    w = open(file, "w")
+#    w.write(rep)
 
 def getAttachment(fileName):
     try:
@@ -59,6 +59,7 @@ def getMail(config):
             print("Found email from:", returnAddress, "With the subject:", subject)
             if subject in config["reportCodes"]:        # if a report code has been sent as email subject, it's a valid email
                 emailsFound.append(returnAddress)       # add to list of addresses to email back
+        
         except: logError("Logged in okay but could not get emails in" + str(popMail.list()[1]))
 
     popMail.quit()
