@@ -103,14 +103,14 @@ def sendMail(to, config, stringDate, svg):
         msg['Subject'] = config["title"] + " : " + stringDate       # set email title
 
         # Connecting to server and sending email
-        server = smtplib.SMTP('smtp.gmail.com', 587)                # emailprovider's SMTP server details        
-        server.starttls()                                           # Comment out if email provider doesn't use TLS
-        server.login(config["emailAddress"], config["emailPass"])   # Login to the SMTP server
+        server = smtplib.SMTP(config["smtpDomain"], config["smtpPort"]) # emailprovider's SMTP server details        
+        server.starttls()                                               # Comment out if email provider doesn't use TLS
+        server.login(config["emailAddress"], config["emailPass"])       # Login to the SMTP server
 
         server.send_message(msg)        # Send the message
-        print('Email sent')
         server.quit()                   # Disconnect from the Server
         emailAttempts = 0               # reset email attempts
+        print('Email sent')
     
     except:
         print('Could not send email')

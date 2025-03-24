@@ -4,11 +4,11 @@ import poplib
 
 def importConfig():    
     configOpen = open("config.json", "r")
-    config = json.loads(configOpen.read())  # get config as dictionary
+    c = json.loads(configOpen.read())  # get config as dictionary
     configOpen.close()
     # check all required variables are there, will error if any are missing that prevents startup or prevents updating of bad config
-    tooHighTemp, tooLowTemp, generateGraph, sendEmail, reportCodes, emailAddress, emailPass, sendTo, title, message = config["tooHighTemp"], config["tooLowTemp"], config["generateGraph"], config["sendEmail"], config["reportCodes"], config["emailAddress"], config["emailPass"], config["sendTo"], config["title"], config["message"]
-    return config
+    validate = (c["tooHighTemp"], c["tooLowTemp"], c["generateGraph"], c["sendEmail"], c["emailAddress"], c["emailPass"], c["popDomain"], c["smtpDomain"], c["smtpPort"], c["reportCodes"], c["sendTo"], c["title"], c["message"])
+    return c
 
 def logError(e):
     e = str(datetime.now()) + ": " +  e     # format error with date and time
@@ -17,7 +17,7 @@ def logError(e):
     errorLog.write(e + "\n")                # write to error log, plus new line
     errorLog.close()
 
-#def replaceInFile(file, x, y):
+#def replaceInFile(file, x, y): not used anymore
 #    r = open(file, "r")
 #    read = r.read()
 #    r.close()
@@ -37,14 +37,13 @@ def getAttachment(fileName):
 
 
 def getMail(config):
-    stringDate = str(datetime.now())                # date as string
-    popMail = poplib.POP3_SSL('pop.googlemail.com', '995') 
+    popMail = poplib.POP3_SSL(config["popDomain"], '995')   # POP domain from config.json, port 995
     popMail.user(config["emailAddress"]) 
     popMail.pass_(config["emailPass"]) 
     numMessages = len(popMail.list()[1])
     emailsFound = []
 
-    for i in range(numMessages):                    # in new messages
+    for i in range(numMessages):                        # in new messages
         returnAddress = ""
         subject = ""
 

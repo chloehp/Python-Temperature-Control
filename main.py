@@ -9,7 +9,7 @@ import utility
 appVersion = "v.0.0.0.0.0.0.0.0000003"
 currentDay = datetime.now().day                     # current day of the month
 try: defaultConfig = utility.importConfig()         # load config. If this fails, then one or more essential variable is missing
-except: raise Exception("The following variables are required in config.json: tooHighTemp, tooLowTemp, generateGraph, sendEmail, reportCodes, emailAddress, emailPass, sendTo, title and message")
+except: raise Exception("The following variables are required in config.json (even if left blank): tooHighTemp, tooLowTemp, generateGraph, sendEmail, emailAddress, emailPass, popDomain, smtpDomain, smtpPort, reportCodes, sendTo, title and message")
 
 temphumid.startup()
 print("Running Python Temperature Control", appVersion)

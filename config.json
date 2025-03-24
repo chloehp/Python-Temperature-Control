@@ -5,12 +5,17 @@
 
     "generateGraph": true,
     "sendEmail": false,
-    " comment2": "If someone sends an email with one of these subjects, will return a report:",
-    "reportCodes": ["r", "report", "Report", "mushrooms", "Mushrooms"],
 
-    "emailAddress": "THE SENDER EMAIL",
-    "emailPass": "THE SENDER EMAIL APP PASSWORD",
-    "sendTo": "THE RECIPIENT EMAIL",
-    "title": "EMAIL TITLE",
-    "message": "EMAIL MESSAGE"
+    "emailAddress": "MY EMAIL ADDRESS",
+    "emailPass": "MY EMAIL APP PASSWORD",
+    "popDomain": "pop.gmail.com",
+    "smtpDomain": "smtp.gmail.com",
+    "smtpPort": 587,
+
+    " comment2": "If someone sends an email with one of these subjects, PTC will return a report:",
+    "reportCodes": ["r", "report", "Report"],
+
+    "sendTo": "DEFAULT RECIPIENT EMAIL ADDRESS",
+    "title": "Temperature and Humidity report",
+    "message": ""
 }
