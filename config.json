@@ -5,6 +5,7 @@
 
     "generateGraph": true,
     "sendEmail": false,
+    "resetTime": ["00", "00"],
 
     "emailAddress": "MY EMAIL ADDRESS",
     "emailPass": "MY EMAIL APP PASSWORD",

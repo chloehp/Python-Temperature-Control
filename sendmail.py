@@ -17,25 +17,31 @@ def generateSVG(stringDate, highTemp, lowTemp):
 
     highTempPath = ""
     lowTempPath = ""
-    if isinstance(highTemp, (int, float)) and isinstance(lowTemp, (int, float)):                                    # if highTemp and lowTemp are numbers
-        highTempYPlot = str(204 - (highTemp * 3.6))
-        lowTempYPlot = str(204 - (lowTemp * 3.6))
+    if isinstance(highTemp, (int, float)) and isinstance(lowTemp, (int, float)):                                    # if highTemp and lowTemp exist and are numbers
+        highTempYPlot = str(204 - (highTemp * 3.6))                                                                 # 0°C is at y="204", 50°C is at y="24", 1°C = 3.6
+        lowTempYPlot = str(204 - (lowTemp * 3.6))                                                                   # 0°C is at y="204", 50°C is at y="24", 1°C = 3.6
         highTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{highTempYPlot} 255,{highTempYPlot}' id='path3'/>"""   # draw line for high temperature
         lowTempPath = f"""{pathStart("#4d4d4d", "0.265")}15,{lowTempYPlot} 255,{lowTempYPlot}' id='path4'/>"""      # draw line for low temperature
     
-    hPath = pathStart("#5cbed0")                # new path for humidity
+    previousTime = 0
+    hPath = pathStart("#5cbed0")                # new path for humidity, give line colour
     for item in temphumid.logList:              # for each dict in the list
         if item["h%"] == -999: continue         # if bad data, skip in graph
         dTime = item["H"] + (item["M"] / 60)    # get time as decimal (hour + min/60)
+        if dTime < previousTime: continue       # if time is less than previous loop, skip in graph
+        else: previousTime = dTime              # set 'previous time' for next loop
         xPlot = str((dTime * 10) + 15)          # get x plot (time): 00:00 is at x="15", 24:00 is at x="255"
         yPlot = str(204 - (item["h%"] * 1.8))   # and y plot (humidity): 0% is at y="204", 100% is at y="24", 1% = 1.8
         hPath += xPlot + "," + yPlot + " "      # add cordinates        
     hPath += "' id='path5'/>"                   # close new path
     
-    tPath = pathStart("#ff0000")                # new path for temperature
+    previousTime = 0
+    tPath = pathStart("#ff0000")                # new path for temperature, give line colour
     for item in temphumid.logList:              # for each dict in the list
         if item["tC"] == -999: continue         # if bad data, skip in graph
         dTime = item["H"] + (item["M"] / 60)    # get time as decimal
+        if dTime < previousTime: continue       # if time is less than previous loop, skip in graph
+        else: previousTime = dTime              # set 'previous time' for next loop
         xPlot = str((dTime * 10) + 15)          # get x plot (time)
         yPlot = str(204 - (item["tC"] * 3.6))   # and y plot (temperature): 0°C is at y="204", 50°C is at y="24", 1°C = 3.6
         tPath += xPlot + "," + yPlot + " "      # add cordinates        
