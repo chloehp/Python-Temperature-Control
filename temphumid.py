@@ -1,4 +1,4 @@
-simulated = True
+simulated = False
 
 import json
 from time import sleep

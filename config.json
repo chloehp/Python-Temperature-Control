@@ -1,7 +1,7 @@
 {
     " comment1": "Leave blank to not set temperature range:",
-    "tooHighTemp": 42,
-    "tooLowTemp": 21,
+    "tooHighTemp": 36,
+    "tooLowTemp": 18,
 
     "generateGraph": true,
     "sendEmail": false,

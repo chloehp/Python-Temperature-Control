@@ -45,7 +45,7 @@ while True:                                                                 # lo
         if config["generateGraph"]:                                         # if generateGraph is True
             svg = sendmail.generateSVG(stringDate, highTemp, lowTemp)       # generate new temp and humidity graph
                                                                             # else svg can stay blank
-        if config["sendEmail"]:                                             # if sendEmail is True
+        if config["sendEmail"] and "@" in config["sendTo"]:                 # if sendEmail is True and sendTo has an @ in it
             sendmail.sendMail(config["sendTo"], config, stringDate, svg)    # send email
                                                                             # else dont
         temphumid.logList.clear()                                           # reset todays list (and log.json)
